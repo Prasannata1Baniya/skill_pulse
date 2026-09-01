@@ -3,11 +3,36 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .models import Role
+
 from .serializers import (
     SkillAnalysisRequestSerializer,
     RoleSerializer,
+    RegisterSerializer,
 )
 
+@api_view(["POST"])
+def register(request):
+    serializer = RegisterSerializer(data=request.data)
+
+    if serializer.is_valid():
+        user = serializer.save()
+
+        return Response(
+            {
+                "message": "User registered successfully.",
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                },
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+    return Response(
+        serializer.errors,
+        status=status.HTTP_400_BAD_REQUEST,
+    )
 
 @api_view(["GET"])
 def get_roles(request):

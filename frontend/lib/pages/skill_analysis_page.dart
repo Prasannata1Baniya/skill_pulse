@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../models/role.dart';
 import '../services/api_service.dart';
 import 'result_page.dart';
 
@@ -10,9 +12,9 @@ class SkillAnalysisPage extends StatefulWidget {
 }
 
 class _SkillAnalysisPageState extends State<SkillAnalysisPage> {
-  List<dynamic> roles = [];
+  List<Role> roles = [];
 
-  Map<String, dynamic>? selectedRole;
+  Role? selectedRole;
 
   final Set<String> selectedSkills = {};
 
@@ -60,10 +62,8 @@ class _SkillAnalysisPageState extends State<SkillAnalysisPage> {
       return [];
     }
 
-    final skills = selectedRole!['skills'] as List<dynamic>;
-
-    return skills
-        .map((skill) => skill['name'].toString())
+    return selectedRole!.skills
+        .map((skill) => skill.name)
         .toList();
   }
 
@@ -75,7 +75,9 @@ class _SkillAnalysisPageState extends State<SkillAnalysisPage> {
     if (selectedSkills.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please select at least one skill.'),
+          content: Text(
+            'Please select at least one skill.',
+          ),
         ),
       );
       return;
@@ -87,7 +89,7 @@ class _SkillAnalysisPageState extends State<SkillAnalysisPage> {
 
     try {
       final result = await ApiService.analyzeSkills(
-        targetRole: selectedRole!['name'],
+        targetRole: selectedRole!.name,
         skills: selectedSkills.toList(),
       );
 
@@ -98,15 +100,9 @@ class _SkillAnalysisPageState extends State<SkillAnalysisPage> {
         MaterialPageRoute(
           builder: (context) => ResultPage(
             matchScore: result.matchScore,
-            matchedSkills: List<String>.from(
-              result.matchedSkills,
-            ),
-            missingSkills: List<String>.from(
-              result.missingSkills,
-            ),
-            recommendations: List<String>.from(
-              result.recommendations,
-            ),
+            matchedSkills: result.matchedSkills,
+            missingSkills: result.missingSkills,
+            recommendations: result.recommendations,
           ),
         ),
       );
@@ -115,7 +111,9 @@ class _SkillAnalysisPageState extends State<SkillAnalysisPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to analyze skills: $e'),
+          content: Text(
+            'Failed to analyze skills: $e',
+          ),
         ),
       );
     } finally {
@@ -141,7 +139,8 @@ class _SkillAnalysisPageState extends State<SkillAnalysisPage> {
           : SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment:
+          CrossAxisAlignment.start,
           children: [
             const Text(
               'Analyze Your Skills',
@@ -156,7 +155,9 @@ class _SkillAnalysisPageState extends State<SkillAnalysisPage> {
             const Text(
               'Choose your target career and select '
                   'the skills you already have.',
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(
+                fontSize: 16,
+              ),
             ),
 
             const SizedBox(height: 28),
@@ -171,16 +172,16 @@ class _SkillAnalysisPageState extends State<SkillAnalysisPage> {
 
             const SizedBox(height: 8),
 
-            DropdownButtonFormField<Map<String, dynamic>>(
+            DropdownButtonFormField<Role>(
               initialValue: selectedRole,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Select a role',
               ),
               items: roles.map((role) {
-                return DropdownMenuItem<Map<String, dynamic>>(
+                return DropdownMenuItem<Role>(
                   value: role,
-                  child: Text(role['name']),
+                  child: Text(role.name),
                 );
               }).toList(),
               onChanged: (value) {
@@ -239,18 +240,22 @@ class _SkillAnalysisPageState extends State<SkillAnalysisPage> {
               width: double.infinity,
               height: 52,
               child: ElevatedButton(
-                onPressed: isLoading ? null : analyzeSkills,
+                onPressed:
+                isLoading ? null : analyzeSkills,
                 child: isLoading
                     ? const SizedBox(
                   height: 24,
                   width: 24,
-                  child: CircularProgressIndicator(
+                  child:
+                  CircularProgressIndicator(
                     strokeWidth: 2,
                   ),
                 )
                     : const Text(
                   'Analyze Skills',
-                  style: TextStyle(fontSize: 17),
+                  style: TextStyle(
+                    fontSize: 17,
+                  ),
                 ),
               ),
             ),

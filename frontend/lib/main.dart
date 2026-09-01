@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/pages/home_page.dart';
+import 'package:frontend/auth/login_page.dart';
 
 void main() {
   runApp(const SkillPulseApp());
@@ -16,7 +16,7 @@ class SkillPulseApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: const LoginPage(),
     );
   }
 }
