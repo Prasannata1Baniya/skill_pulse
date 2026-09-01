@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import analyze_skills
+from .views import analyze_skills, get_roles
 
 urlpatterns = [
-    path("api/v1/analyze/", analyze_skills, name="analyze_skills"),
+    path("analyze/", analyze_skills, name="analyze_skills"),
+    path("roles/", get_roles, name="get_roles"),
 ]

@@ -3,8 +3,22 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .models import Role
-from .serializers import SkillAnalysisRequestSerializer
+from .serializers import (
+    SkillAnalysisRequestSerializer,
+    RoleSerializer,
+)
 
+
+@api_view(["GET"])
+def get_roles(request):
+    roles = Role.objects.prefetch_related("skills").all()
+
+    serializer = RoleSerializer(roles, many=True)
+
+    return Response(
+        serializer.data,
+        status=status.HTTP_200_OK,
+    )
 
 @api_view(["POST"])
 def analyze_skills(request):
